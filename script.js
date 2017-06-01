@@ -19,7 +19,7 @@ var map = new mapboxgl.Map({
   //pitch: 80,
 //  bearing: 60,
   // initial zoom
-  zoom: 16
+  zoom: 14
 });
 var stores =       {
         "type": "FeatureCollection",
@@ -279,6 +279,64 @@ map.on('load', function(e) {
     }
   });
   buildLocationList(stores);
+  const latlon = [[ 38.9007, -77.04972 ],
+    [ 38.9007, -77.04883 ],
+    [ 38.90202, -77.04883 ],
+    [ 38.90236, -77.04883 ],
+    [ 38.90264, -77.04881 ],
+    [ 38.90293, -77.04881 ],
+    [ 38.9039, -77.04881 ],
+    [ 38.90489, -77.04789 ],
+    [ 38.9053, -77.04752 ],
+    [ 38.90622, -77.04664 ],
+    [ 38.90806, -77.04491 ],
+    [ 38.90857, -77.04446 ],
+    [ 38.90896, -77.04404 ],
+    [ 38.90906, -77.0439 ],
+    [ 38.90908, -77.04377 ],
+    [ 38.90904, -77.04358 ],
+    [ 38.90903, -77.0434 ],
+    [ 38.90905, -77.04321 ],
+    [ 38.90911, -77.04305 ],
+    [ 38.90918, -77.04291 ],
+    [ 38.90923, -77.04284 ],
+    [ 38.9093, -77.04278 ],
+    [ 38.90948, -77.04269 ],
+    [ 38.90953, -77.04267 ],
+    [ 38.90958, -77.04258 ],
+    [ 38.90961, -77.04249 ],
+    [ 38.90964, -77.04216 ],
+    [ 38.90964, -77.03656 ],
+    [ 38.90965, -77.03411 ]];
+
+    const lonlat = latlon.map(([lat,lon]) => {
+      return [lon,lat];
+    });
+
+  map.addLayer({
+      "id": "route",
+      "type": "line",
+      "source": {
+          "type": "geojson",
+          "data": {
+              "type": "Feature",
+              "properties": {},
+              "geometry": {
+                  "type": "LineString",
+                  "coordinates": lonlat
+              }
+          }
+      },
+      "layout": {
+          "line-join": "round",
+          "line-cap": "round"
+      },
+      "paint": {
+          "line-color": "#888",
+          "line-width": 8
+      }
+  });
+
 });
 
 
@@ -376,6 +434,11 @@ map.on('click', function(e) {
     listing.classList.add('active');
   }
 });
+
+
+
+
+
 // the 'building' layer in the mapbox-streets vector source contains building-height
 // data from OpenStreetMap.
 // map.on('load', function() {
