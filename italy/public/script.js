@@ -1,3 +1,6 @@
+
+
+
 // This will let you use the .remove() function later on
 if (!('remove' in Element.prototype)) {
   Element.prototype.remove = function() {
@@ -33,7 +36,7 @@ var stores =       {
               ]
             },
             "properties": {
-              "phoneFormatted1": "+39 081 837 9671",
+              "phoneFormatted1": "+(39) 081 837 9671",
               "phone1": "390818379671",
               "phoneFormatted2": "",
               "phone2": "",
@@ -56,14 +59,16 @@ var stores =       {
             "properties": {
               "phoneFormatted1": "+(39) 328 411 6579",
               "phone1": "393284116579",
-              "phoneFormatted2": "+39 338 525 3216",
+              "phoneFormatted2": "+(39) 338 525 3216",
               "phone2": "393385253216",
               "address": "Vico Paparelle Al Pendino, 5",
               "city": "Naples",
               "country": "Italy",
               "crossStreet": "",
               "postalCode": "80138",
-              "state": "Campania"
+              "state": "Campania",
+              "host": "Valentina & Antonello",
+              "rescode": "HMAHRTMYHH"
             }
           },
           {
@@ -75,7 +80,7 @@ var stores =       {
               ]
             },
             "properties": {
-              "phoneFormatted1": "+39 338 471 1983",
+              "phoneFormatted1": "+(39) 338 471 1983",
               "phone1": "393384711983",
               "phoneFormatted2": "",
               "phone2": "",
@@ -84,7 +89,9 @@ var stores =       {
               "country": "Italy",
               "crossStreet": "",
               "postalCode": "20121",
-              "state": "Lombardia"
+              "state": "Lombardia",
+              "host": "Lorenzo",
+              "rescode": "HM29YSPDZ4"
             }
           },
           {
@@ -96,7 +103,7 @@ var stores =       {
               ]
             },
             "properties": {
-              "phoneFormatted1": "+39 345 026 4156",
+              "phoneFormatted1": "+(39) 345 026 4156",
               "phone1": "393450264156",
               "phoneFormatted2": "",
               "phone2": "",
@@ -105,7 +112,9 @@ var stores =       {
               "country": "Italy",
               "crossStreet": "",
               "postalCode": "30121",
-              "state": "Veneto"
+              "state": "Veneto",
+              "host": "Alex",
+              "rescode": "HM434BCX29"
             }
           },
           {
@@ -117,16 +126,18 @@ var stores =       {
               ]
             },
             "properties": {
-              "phoneFormatted1": "+34 666 498 222",
+              "phoneFormatted1": "+(34) 666 498 222",
               "phone1": "34666498222",
-              "phoneFormatted2": "+34 93 221 36 27",
+              "phoneFormatted2": "+(34) 93 221 36 27",
               "phone2": "34932213627",
               "address": "Via dell'Agnello",
               "city": "Roma",
               "country": "Italy",
               "crossStreet": "",
               "postalCode": "00184",
-              "state": "Lazio"
+              "state": "Lazio",
+              "host": "Linda",
+              "rescode": "HMFNRWKTT4"
             }
           },
 
@@ -146,10 +157,60 @@ map.on('load', function(e) {
     },
     layout: {
       'icon-image': 'lodging-15',
+      'icon-size': '40',
       'icon-allow-overlap': true,
     }
   });
   buildLocationList(stores);
+//  https://maps.googleapis.com/maps/api/directions/json?origin="2221 I St NW, Washington, DC 20037, USA"&destination="1471 P St NW, Washington, DC 20005, USA"
+
+
+    map.addLayer({
+        "id": "route",
+        "type": "line",
+        "source": {
+            "type": "geojson",
+            "data": {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [-122.48369693756104, 37.83381888486939],
+                        [-122.48348236083984, 37.83317489144141],
+                        [-122.48339653015138, 37.83270036637107],
+                        [-122.48356819152832, 37.832056363179625],
+                        [-122.48404026031496, 37.83114119107971],
+                        [-122.48404026031496, 37.83049717427869],
+                        [-122.48348236083984, 37.829920943955045],
+                        [-122.48356819152832, 37.82954808664175],
+                        [-122.48507022857666, 37.82944639795659],
+                        [-122.48610019683838, 37.82880236636284],
+                        [-122.48695850372314, 37.82931081282506],
+                        [-122.48700141906738, 37.83080223556934],
+                        [-122.48751640319824, 37.83168351665737],
+                        [-122.48803138732912, 37.832158048267786],
+                        [-122.48888969421387, 37.83297152392784],
+                        [-122.48987674713133, 37.83263257682617],
+                        [-122.49043464660643, 37.832937629287755],
+                        [-122.49125003814696, 37.832429207817725],
+                        [-122.49163627624512, 37.832564787218985],
+                        [-122.49223709106445, 37.83337825839438],
+                        [-122.49378204345702, 37.83368330777276]
+                    ]
+                }
+            }
+        },
+        "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        "paint": {
+            "line-color": "#888",
+            "line-width": 8
+        }
+
+});
 });
 
 
@@ -192,9 +253,16 @@ function buildLocationList(data) {
     // Create a new div with the class 'details' for each store
     // and fill it with the city and phone number
     var details = listing.appendChild(document.createElement('div'));
-    details.innerHTML = prop.city;
-    if (prop.phone) {
-      details.innerHTML += ' &middot; ' + prop.phoneFormatted;
+    if (prop.host) {
+        details.innerHTML = prop.host + '<br>';
+      }
+
+    details.innerHTML +=  prop.city;
+    if (prop.phone1) {
+      details.innerHTML += ' <br> ' + prop.phoneFormatted1;
+    }
+    if (prop.phone2 !== "") {
+      details.innerHTML += ' &middot; ' + prop.phoneFormatted2;
     }
   }
 }
@@ -213,7 +281,7 @@ function createPopUp(currentFeature) {
 
   var popup = new mapboxgl.Popup({ closeOnClick: false })
     .setLngLat(currentFeature.geometry.coordinates)
-    .setHTML('<h3>Sweetgreen</h3>' +
+    .setHTML('<h3>'+currentFeature.properties.city+'</h3>' +
       '<h4>' + currentFeature.properties.address + '</h4>')
     .addTo(map);
 }
