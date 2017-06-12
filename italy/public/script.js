@@ -1,6 +1,5 @@
 
 
-
 // This will let you use the .remove() function later on
 if (!('remove' in Element.prototype)) {
   Element.prototype.remove = function() {
@@ -157,8 +156,7 @@ map.on('load', function(e) {
     },
     layout: {
       'icon-image': 'lodging-15',
-      'icon-size': '40',
-      'icon-allow-overlap': true,
+      'icon-allow-overlap': true
     }
   });
   buildLocationList(stores);

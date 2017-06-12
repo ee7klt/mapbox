@@ -55,6 +55,7 @@ const wrapper = (origin, destination) => {
       duration: duration
     }
     //console.log(paths)
+    fs.writeFileSync(origin+destination+'.json', JSON.stringify(paths, null, 2) , 'utf-8');
   })
 }
 
