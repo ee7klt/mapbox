@@ -50,7 +50,7 @@ const wrapper = (origin, destination) => {
       origin: origin,
       destination: destination,
       path: path,
-      coords: coords,
+      coords: coords.map(([lat,lon]) => {return [lon,lat]}),
       distance: distance,
       duration: duration
     }
