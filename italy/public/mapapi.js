@@ -4,7 +4,7 @@ const fs = require('fs')
 
 const  mapapi = (start, end, mode) => {
   return new Promise((resolve, reject) => {
-    const url = 'https://maps.googleapis.com/maps/api/directions/json?origin=' + start + '&destination=' + end +'&mode=' + mode;
+    const url = 'https://maps.googleapis.com/maps/api/directions/json?origin=' + start + '&destination=' + end +'&travelmode=' + mode;
     https.get(url, (res) => {
       var body = ''
       res.on('data', (chunk) => {

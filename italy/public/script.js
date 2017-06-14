@@ -1,7 +1,8 @@
 
 console.log('read')
 
-
+const sol_base = ['#0ac7a4', '#fabfd1', '#0078ba', '#f26532',
+                '#c5141e'];
 const doGET = (path, callback) => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -20,6 +21,7 @@ const doGET = (path, callback) => {
       };
       xhr.open("GET", path);
       xhr.send();
+      console.log('file open request sent')
     })
 
 }
@@ -30,8 +32,8 @@ const handleFileData = (fileData) =>  {
         return;
     }
     const json = JSON.parse(fileData)
-    console.log(json)
-    return json.coords
+    //console.log(json)
+    return json
 }
 //
 // // Do the request
@@ -53,7 +55,9 @@ makeFileNames(termini.roma, termini.napoli);
 makeFileNames(termini.napoli, termini.milano);
 makeFileNames(termini.milano, termini.venezia);
 makeFileNames(termini.venezia, termini.roma);
-console.log(fileNames)
+//console.log(fileNames)
+
+
 
 // This will let you use the .remove() function later on
 if (!('remove' in Element.prototype)) {
@@ -216,36 +220,56 @@ map.on('load', function(e) {
   });
   buildLocationList(stores);
 //  https://maps.googleapis.com/maps/api/directions/json?origin="2221 I St NW, Washington, DC 20037, USA"&destination="1471 P St NW, Washington, DC 20005, USA"
-fileNames.map((file) => {
-  doGET(file, handleFileData)
-  .then((coords) => {
-    map.addLayer({
-        "id": "route",
-        "type": "line",
-        "source": {
-            "type": "geojson",
-            "data": {
-                "type": "Feature",
-                "properties": {},
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": coords
-                }
-            }
-        },
-        "layout": {
-            "line-join": "round",
-            "line-cap": "round"
-        },
-        "paint": {
-            "line-color": "#f01010",
-            "line-width": 3
-        }
+let coords =[]
+let i = 0;
+let j = 0;
+Promise.all([doGET(fileNames[0],handleFileData),doGET(fileNames[1],handleFileData),doGET(fileNames[2],handleFileData),doGET(fileNames[3],handleFileData)])
+  .then((data) => {
+    console.log('adding freccia path')
+    data.map(route => {
+      console.log(route.coords)
+      let coord = route.coords;
+      if (i == 1) {
+        const first = coord[0]
+        const last = coord[coord.length-1]
+        coord = coord.map(([lon,lat]) => {
+          return [lon-0.04,lat]
+        })
+        coord[0] = first;
+        coord[coord.length-1] = last;
+      }
+      map.addLayer({
+          "id": ''+i++,
+          "type": "line",
+          "source": {
+              "type": "geojson",
+              "data": {
+                  "type": "Feature",
+                  "properties": {},
+                  "geometry": {
+                      "type": "LineString",
+                      "coordinates": coord
+                  }
+              }
+          },
+          "layout": {
+              "line-join": "round",
+              "line-cap": "round"
+          },
+          "paint": {
+              "line-color": sol_base[j++],
+              "line-width": 3
+          }
+      });
 
-  });
-  })
-}
-)
+    })
+
+
+    })
+
+
+
+
 
 
 });
