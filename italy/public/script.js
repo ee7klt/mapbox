@@ -2,7 +2,7 @@
 console.log('read')
 
 const sol_base = ['#0ac7a4', '#fabfd1', '#0078ba', '#f26532',
-                '#c5141e'];
+                '#c5141e','#ff0000'];
 const doGET = (path, callback) => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -218,51 +218,134 @@ map.on('load', function(e) {
       'icon-allow-overlap': true
     }
   });
+  // var freccia =       {
+  //         "type": "FeatureCollection",
+  //         "features": [
+  //           {
+  //             "type": "Feature",
+  //             "geometry": {
+  //               "type": "Point",
+  //               "coordinates": [
+  //                 14.236688, 40.556101
+  //               ]
+  //             },
+  //             "properties": {
+  //               "origin": ,
+  //               "destination":
+  //             }
+  //           }
+  //         }
+  // map.on('load', function(e) {
+  //   // Add the data to your map as a layer
+  //   map.addLayer({
+  //     id: 'locations',
+  //     type: 'symbol',
+  //     // Add a GeoJSON source containing place coordinates and information.
+  //     source: {
+  //       type: 'geojson',
+  //       data: freccia
+  //     },
+  //     layout: {
+  //       'icon-image': 'lodging-15',
+  //       'icon-allow-overlap': true
+  //     }
+  //   });
   buildLocationList(stores);
 //  https://maps.googleapis.com/maps/api/directions/json?origin="2221 I St NW, Washington, DC 20037, USA"&destination="1471 P St NW, Washington, DC 20005, USA"
-let coords =[]
-let i = 0;
-let j = 0;
-Promise.all([doGET(fileNames[0],handleFileData),doGET(fileNames[1],handleFileData),doGET(fileNames[2],handleFileData),doGET(fileNames[3],handleFileData)])
-  .then((data) => {
-    console.log('adding freccia path')
-    data.map(route => {
-      console.log(route.coords)
-      let coord = route.coords;
-      if (i == 1) {
-        const first = coord[0]
-        const last = coord[coord.length-1]
-        coord = coord.map(([lon,lat]) => {
-          return [lon-0.04,lat]
-        })
-        coord[0] = first;
-        coord[coord.length-1] = last;
-      }
-      map.addLayer({
-          "id": ''+i++,
-          "type": "line",
-          "source": {
-              "type": "geojson",
-              "data": {
-                  "type": "Feature",
-                  "properties": {},
-                  "geometry": {
-                      "type": "LineString",
-                      "coordinates": coord
-                  }
-              }
-          },
-          "layout": {
-              "line-join": "round",
-              "line-cap": "round"
-          },
-          "paint": {
-              "line-color": sol_base[j++],
-              "line-width": 3
-          }
-      });
+let trips =[]
 
-    })
+
+// Promise.all([doGET(fileNames[0],handleFileData),doGET(fileNames[1],handleFileData),doGET(fileNames[2],handleFileData),doGET(fileNames[3],handleFileData)])
+doGET('trips.json', handleFileData)
+  .then((trips) => {
+    let i = 0;
+    for (var trip in trips) {
+      if (trip !== 'napoli_capri' && trip !== 'capri_sorrento') {
+        console.log('i = '+i)
+        console.log('adding path for '+ trip )
+        let coords = trips[trip].coords
+        if (trip === 'napoli_milano') {
+          coords.map([lon,lat] => {
+            return [lon-0.05,lat]
+          })
+        }
+        map.addLayer({
+            "id": 'path'+i,
+            "type": "line",
+            "source": {
+                "type": "geojson",
+                "data": {
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": coords
+                    }
+                }
+            },
+            "layout": {
+                "line-join": "round",
+                "line-cap": "round"
+            },
+            "paint": {
+                "line-color": sol_base[i],
+                "line-width": 3
+            }
+        });
+        i++;
+      }
+
+    }
+
+    // data.map(route => {
+    //   console.log(route.coords)
+    //   let coord = route.coords;
+    //   // displace line to the left so they don't overlap
+    //   // from naples to milan
+    //   if (i == 1) {
+    //     const first = coord[0]
+    //     const last = coord[coord.length-1]
+    //     coord = coord.map(([lon,lat]) => {
+    //       return [lon-0.04,lat]
+    //     })
+    //     coord[0] = first;
+    //     coord[coord.length-1] = last;
+    //   }
+    //
+    //   map.addLayer({
+    //  "id": "points"+i,
+    //  "type": "symbol",
+    //  "source": {
+    //      "type": "geojson",
+    //      "data": {
+    //          "type": "FeatureCollection",
+    //          "features": [{
+    //              "type": "Feature",
+    //              "geometry": {
+    //                  "type": "Point",
+    //                  "coordinates": coord[Math.floor(coord.length/2)]
+    //              },
+    //              "properties": {
+    //                  "title": route.duration,
+    //                  "icon": ""
+    //              }
+    //          }]
+    //      }
+    //  },
+    //  "layout": {
+    //      "icon-image": "{icon}-15",
+    //      "text-field": "{title}",
+    //      "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+    //      "text-offset": [-1, 0.6],
+    //      "text-anchor": "top",
+    //      "text-size": 10
+    //  },
+    //  "paint": {
+    //    "text-color": sol_base[j]
+    //  }
+    // });
+    //
+    // })
 
 
     })
